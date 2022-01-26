@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using ProfProject.Entidades;
 using ProfProject.Interfaces.Repositorios;
 using ProfProject.Interfaces.UoW;
-using ProfProject.Validations.Materias;
 using ProfProject.Validations.Professores;
 using ProfProject.ViewModels.Professores;
-using System.ComponentModel.DataAnnotations;
 
 namespace ProfProject.Controllers
 {
@@ -60,20 +58,20 @@ namespace ProfProject.Controllers
         {
             _repositorio.Deletar(id);
             Commit();
-            return Ok();
+            return RespostaPadrao();
         }
 
 
         [HttpGet]
         public IActionResult ObterTodos(int pagina, int limite)
         {
-            return Ok(_repositorio.ObterTodos(pagina, limite));
+            return RespostaPadrao(_repositorio.ObterTodos(pagina, limite));
         }
 
         [HttpGet("{id:Guid}")]
         public IActionResult ObterTodos(Guid id)
         {
-            return Ok(_repositorio.ObterPorId(id));
+            return RespostaPadrao(_repositorio.ObterPorId(id));
         }
     }
 }
