@@ -37,7 +37,7 @@ namespace ProfProject.Controllers
         }
 
         [HttpPut("{id:Guid}")]
-        public IActionResult Atualizar( Guid id, [FromBody]  ProfessorViewModel model)
+        public IActionResult Atualizar(Guid id, [FromBody] ProfessorViewModel model)
         {
             var validation = new ProfessorValidation().Validate(model);
 
@@ -46,7 +46,7 @@ namespace ProfProject.Controllers
             if (!modelValida) return RespostaPadrao();
 
             var entidade = Mapper.Map<Professor>(model);
-            _repositorio.Atualizar(id,entidade);
+            _repositorio.Atualizar(id, entidade);
 
             Commit();
 
@@ -66,6 +66,12 @@ namespace ProfProject.Controllers
         public IActionResult ObterTodos(int pagina, int limite)
         {
             return RespostaPadrao(_repositorio.ObterTodos(pagina, limite));
+        }
+
+        [HttpGet("filter")]
+        public IActionResult ObterTodosPorFiltro(Guid? materiaId, DayOfWeek? diaDaSemana, TimeSpan? horaDispInicio, TimeSpan? horaDispFim, int pagina, int limite)
+        {
+            return RespostaPadrao(_repositorio.ObterTodosPorFiltro(materiaId, diaDaSemana, horaDispInicio, horaDispFim, pagina, limite));
         }
 
         [HttpGet("{id:Guid}")]
