@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 
+builder.Services.AddCors(cors => cors.AddPolicy("*", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().Build()));
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddDbContext<SQLContext>();
@@ -24,6 +26,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors("*");
 
 // migrate
 var services = builder.Services.BuildServiceProvider();
