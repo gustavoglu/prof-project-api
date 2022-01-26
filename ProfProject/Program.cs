@@ -1,16 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using ProfProject.Data.Contexts;
 using ProfProject.Data.Repositorios;
 using ProfProject.Data.UoW;
 using ProfProject.Interfaces.Repositorios;
 using ProfProject.Interfaces.UoW;
+using ProfProject.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson( opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+    .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 builder.Services.AddCors(cors => cors.AddPolicy("*", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().Build()));
 
@@ -38,8 +40,10 @@ sqlContext.Database.Migrate();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-   
+
 }
+
+app.UseMiddleware<ErroRespontaPadraoMidleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();
