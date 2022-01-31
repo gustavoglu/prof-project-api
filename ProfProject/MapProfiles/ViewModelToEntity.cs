@@ -10,11 +10,13 @@ namespace ProfProject.MapProfiles
         public ViewModelToEntity()
         {
             CreateMap<MateriaViewModel, Materia>();
+            CreateMap<MateriaFiltroViewModel, Materia>();
+            CreateMap<Materia, MateriaFiltroViewModel>();
 
             CreateMap<ProfessorViewModel, Professor>();
             CreateMap<ProfessorDiaViewModel, ProfessorDia>();
             CreateMap<ProfessorMateriaViewModel, ProfessorMateria>();
-            
+
         }
     }
 }

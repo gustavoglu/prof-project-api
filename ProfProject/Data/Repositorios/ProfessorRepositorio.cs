@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using ProfProject.Data.Contexts;
 using ProfProject.Entidades;
 using ProfProject.Interfaces.Repositorios;
@@ -15,16 +16,47 @@ namespace ProfProject.Data.Repositorios
 
         public Paginacao<Professor> ObterTodosPorFiltro(Guid? materiaId, DayOfWeek? diaDaSemana, TimeSpan? horaDispInicio, TimeSpan? horaDispFim, int pagina, int limite)
         {
-            IQueryable<Professor> query = DbSet;
 
-            query.Include(professor => professor.Materias)
+            IQueryable<Professor> query = null;
+
+            if (!materiaId.HasValue && !diaDaSemana.HasValue && !horaDispInicio.HasValue && !horaDispFim.HasValue)
+                query =  DbSet.Include(professor => professor.Materias)
                             .Include(professor => professor.DiasDaSemana)
-                            .Where(DeletadoExpression);
+                            .Where(DeletadoExpression); 
 
-            if (materiaId.HasValue) query.Where(professor => professor.Materias.Any(materia => materia.Id == materiaId));// Exists(materia => materia.Id == materiaId));
-            if (diaDaSemana.HasValue) query.Where(professor => professor.DiasDaSemana.Any(dia => dia.DiaSemana == diaDaSemana));
-            if (horaDispInicio.HasValue) query.Where(professor => professor.DiasDaSemana.Any(dia => dia.HoraDispInicio >= horaDispInicio));
-            if (horaDispFim.HasValue) query.Where(professor => professor.DiasDaSemana.Any(dia => dia.HoraDispFim <= horaDispFim));
+            if (materiaId.HasValue && !diaDaSemana.HasValue && !horaDispInicio.HasValue &&  !horaDispFim.HasValue) 
+                query = DbSet.Include(professor => professor.Materias)
+                            .Include(professor => professor.DiasDaSemana)
+                            .Where(DeletadoExpression)
+                            .Where(professor => professor.Materias.Any(materia => materia.Id == materiaId));
+
+            if (materiaId.HasValue && diaDaSemana.HasValue && !horaDispInicio.HasValue &&  !horaDispFim.HasValue)
+                query = DbSet.Include(professor => professor.Materias)
+                            .Include(professor => professor.DiasDaSemana)
+                            .Where(DeletadoExpression)
+                            .Where(professor => professor.Materias.Any(materia => materia.Id == materiaId))
+                            .Where(professor => professor.DiasDaSemana.Any(dia => dia.DiaSemana == diaDaSemana));
+
+
+            if (materiaId.HasValue && diaDaSemana.HasValue && horaDispInicio.HasValue  && !horaDispFim.HasValue)
+                query = DbSet.Include(professor => professor.Materias)
+                            .Include(professor => professor.DiasDaSemana)
+                            .Where(DeletadoExpression)
+                            .Where(professor => professor.Materias.Any(materia => materia.Id == materiaId))
+                            .Where(professor => professor.DiasDaSemana.Any(dia => dia.DiaSemana == diaDaSemana))
+                            .Where(professor => professor.DiasDaSemana.Any(dia => dia.HoraDispInicio >= horaDispInicio));
+
+
+
+            if (materiaId.HasValue && diaDaSemana.HasValue && horaDispInicio.HasValue && horaDispFim.HasValue)
+                query = DbSet.Include(professor => professor.Materias)
+                            .Include(professor => professor.DiasDaSemana)
+                            .Where(DeletadoExpression)
+                            .Where(professor => professor.Materias.Any(materia => materia.Id == materiaId))
+                            .Where(professor => professor.DiasDaSemana.Any(dia => dia.DiaSemana == diaDaSemana))
+                            .Where(professor => professor.DiasDaSemana.Any(dia => dia.HoraDispInicio >= horaDispInicio))
+                            .Where(professor => professor.DiasDaSemana.Any(dia => dia.HoraDispFim <= horaDispFim));
+
 
             var total = query.Count();
 

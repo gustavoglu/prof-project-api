@@ -20,11 +20,11 @@ namespace ProfProject.Data.Repositorios
 
         }
 
-        private readonly SQLContext _context;
+        protected readonly SQLContext Context;
         public Repositorio(SQLContext context)
         {
-            _context = context;
-            DbSet = _context.Set<T>();
+            Context = context;
+            DbSet = Context.Set<T>();
         }
         public void Atualizar(Guid id, T entity)
         {
@@ -36,7 +36,7 @@ namespace ProfProject.Data.Repositorios
 
             DbSet.Add(entity);
             DbSet.Attach(entity);
-            _context.Entry(entity).State = EntityState.Modified;//this is for modiying/update existing entry
+            Context.Entry(entity).State = EntityState.Modified;//this is for modiying/update existing entry
         }
 
         public void Deletar(Guid id)

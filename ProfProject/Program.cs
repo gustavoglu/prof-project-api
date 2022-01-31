@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using ProfProject.Data.Contexts;
 using ProfProject.Data.Repositorios;
 using ProfProject.Data.UoW;

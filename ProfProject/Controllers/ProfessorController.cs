@@ -13,10 +13,12 @@ namespace ProfProject.Controllers
     public class ProfessorController : ControllerBaseApp
     {
         private readonly IProfessorRepositorio _repositorio;
+        private readonly IMateriaRepositorio _materiaRepositorio;
 
-        public ProfessorController(IMapper mapper, IUnitOfWork uoW, IProfessorRepositorio repositorio) : base(mapper, uoW)
+        public ProfessorController(IMapper mapper, IUnitOfWork uoW, IProfessorRepositorio repositorio, IMateriaRepositorio materiaRepositorio) : base(mapper, uoW)
         {
             _repositorio = repositorio;
+            _materiaRepositorio = materiaRepositorio;
         }
 
         [HttpPost]
@@ -35,6 +37,16 @@ namespace ProfProject.Controllers
 
             return RespostaPadrao();
         }
+
+        [HttpGet("filtros")]
+        public IActionResult ObterFiltros()
+        {
+            var materias = _materiaRepositorio.ObterTodos(1, 1000).Data;
+            var materiasFiltro = Mapper.Map<List<MateriaFiltroViewModel>>(materias);
+            var professorFiltro = new ProfessorFiltrosViewModel(materiasFiltro);
+            return RespostaPadrao(professorFiltro);
+        }
+
 
         [HttpPut("{id:Guid}")]
         public IActionResult Atualizar(Guid id, [FromBody] ProfessorViewModel model)
@@ -68,7 +80,7 @@ namespace ProfProject.Controllers
             return RespostaPadrao(_repositorio.ObterTodos(pagina, limite));
         }
 
-        [HttpGet("filter")]
+        [HttpGet("filtro")]
         public IActionResult ObterTodosPorFiltro(Guid? materiaId, DayOfWeek? diaDaSemana, TimeSpan? horaDispInicio, TimeSpan? horaDispFim, int pagina, int limite)
         {
             return RespostaPadrao(_repositorio.ObterTodosPorFiltro(materiaId, diaDaSemana, horaDispInicio, horaDispFim, pagina, limite));
